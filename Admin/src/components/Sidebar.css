@@ -1,0 +1,65 @@
+/* Sidebar general */
+.sidebar-expanded {
+  width: 240px;
+}
+
+.sidebar-collapsed {
+  width: 70px;
+}
+
+/* Transiciones suaves */
+aside {
+  transition: width 0.3s ease, background-color 0.2s ease;
+}
+
+/* Enlaces del menú */
+.nav-link {
+  color: #d1d1d1 !important;
+  font-weight: 500;
+  border-radius: 8px;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+/* Hover: un gris más claro para el fondo */
+.nav-link:hover {
+  background-color: rgba(255, 255, 255, 0.1) !important;
+  color: #ffffff !important;
+}
+
+/* Enlace activo (la ruta actual) */
+.nav-link.active {
+  background-color: #198754 !important; /* verde bootstrap */
+  color: #fff !important;
+}
+
+/* Íconos del menú */
+.nav-link svg {
+  transition: transform 0.2s ease;
+}
+
+/* Animación ligera al pasar el mouse */
+.nav-link:hover svg {
+  transform: scale(1.1);
+}
+
+/* Botón de colapsar */
+.btn-outline-light {
+  color: #d1d1d1 !important;
+}
+
+.btn-outline-light:hover {
+  background-color: rgba(255, 255, 255, 0.1) !important;
+  color: #fff !important;
+}
+
+/* Transición al colapsar */
+.sidebar-collapsed .nav-link span {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+}
+
+.sidebar-expanded .nav-link span {
+  opacity: 1;
+  transition: opacity 0.2s ease 0.1s;
+}

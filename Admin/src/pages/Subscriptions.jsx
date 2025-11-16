@@ -94,7 +94,7 @@ const Subscriptions = () => {
                     </li>
                   ))}
                 </ul>
-                <button className="btn btn-outline-primary w-100">
+                <button className="btn btn-ghost-eco btn-sm">
                   Editar Plan
                 </button>
               </div>

@@ -1,34 +1,15 @@
-import { Bell, Search, User } from "lucide-react";
+import { Bell, User } from "lucide-react";
 
 const Header = () => {
   return (
     <header className="bg-light border-bottom sticky-top shadow-sm">
       <div className="container-fluid px-4 py-3 d-flex align-items-center justify-content-between gap-3">
-        {/* Search */}
-        <div
-          className="flex-grow-1 position-relative"
-          style={{ maxWidth: "400px" }}
-        >
-          <Search
-            className="position-absolute"
-            style={{
-              left: "12px",
-              top: "50%",
-              transform: "translateY(-50%)",
-              width: "18px",
-              height: "18px",
-              color: "#6c757d",
-            }}
-          />
-          <input
-            type="text"
-            className="form-control ps-5"
-            placeholder="Buscar..."
-            style={{
-              backgroundColor: "#fff",
-              borderColor: "#dee2e6",
-            }}
-          />
+        {/* Brand / Título del panel */}
+        <div className="d-flex flex-column">
+          <span className="fw-bold text-success text-uppercase small">
+            EcoAdmin
+          </span>
+          <span className="fw-semibold">Panel de administración</span>
         </div>
 
         {/* Actions */}

@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Plus, Users, Clock, DollarSign } from "lucide-react";
 
 const mockServices = [
@@ -40,6 +41,13 @@ const mockServices = [
 ];
 
 const Services = () => {
+  const [filterType, setFilterType] = useState("all");
+
+  const filteredServices = mockServices.filter((service) => {
+    if (filterType === "all") return true;
+    return service.type === filterType;
+  });
+
   return (
     <div className="container my-5">
       {/* Header */}
@@ -55,75 +63,117 @@ const Services = () => {
         </button>
       </div>
 
+      {/* Filtros */}
+      <div className="card shadow-sm mb-4">
+        <div className="card-body d-flex flex-wrap align-items-center gap-3 justify-content-between">
+          <span className="fw-semibold">Filtrar por tipo:</span>
+          <div className="d-flex flex-wrap gap-2" role="group">
+            <button
+              type="button"
+              className={`btn btn-filter ${
+                filterType === "all" ? "btn-filter-active" : ""
+              }`}
+              onClick={() => setFilterType("all")}
+            >
+              Todos
+            </button>
+            <button
+              type="button"
+              className={`btn btn-filter ${
+                filterType === "Curso" ? "btn-filter-active" : ""
+              }`}
+              onClick={() => setFilterType("Curso")}
+            >
+              Cursos
+            </button>
+            <button
+              type="button"
+              className={`btn btn-filter ${
+                filterType === "Taller" ? "btn-filter-active" : ""
+              }`}
+              onClick={() => setFilterType("Taller")}
+            >
+              Talleres
+            </button>
+          </div>
+        </div>
+      </div>
+
       {/* Services List */}
       <div className="row gy-4">
-        {mockServices.map((service) => (
-          <div key={service.id} className="col-12">
-            <div className="card shadow-sm border-0">
-              <div className="card-header bg-white border-0 pb-0">
-                <div className="d-flex justify-content-between align-items-start">
-                  <div>
-                    <h5 className="fw-semibold mb-1">{service.title}</h5>
-                    <div className="d-flex gap-2">
-                      <span className="badge bg-secondary text-dark">
-                        {service.type}
-                      </span>
-                      <span
-                        className={`badge ${
-                          service.status === "active"
-                            ? "bg-success"
-                            : "bg-outline-secondary text-muted border"
-                        }`}
-                      >
-                        {service.status === "active" ? "Activo" : "Borrador"}
-                      </span>
+        {filteredServices.length === 0 ? (
+          <div className="col-12">
+            <p className="text-muted text-center mb-0">
+              No hay servicios para el filtro seleccionado.
+            </p>
+          </div>
+        ) : (
+          filteredServices.map((service) => (
+            <div key={service.id} className="col-12">
+              <div className="card shadow-sm border-0">
+                <div className="card-header bg-white border-0 pb-0">
+                  <div className="d-flex justify-content-between align-items-start">
+                    <div>
+                      <h5 className="fw-semibold mb-1">{service.title}</h5>
+                      <div className="d-flex gap-2">
+                        <span className="badge bg-secondary text-white">
+                          {service.type}
+                        </span>
+                        <span
+                          className={`badge rounded-pill ${
+                            service.status === "active"
+                              ? "badge-quantity-good"
+                              : "badge-eco"
+                          }`}
+                        >
+                          {service.status === "active" ? "Activo" : "Borrador"}
+                        </span>
+                      </div>
                     </div>
+                    <button className="btn btn-ghost-eco btn-sm">Editar</button>
                   </div>
-                  <button className="btn btn-outline-secondary btn-sm">
-                    Editar
-                  </button>
                 </div>
-              </div>
 
-              <div className="card-body">
-                <div className="row g-3">
-                  {/* Duración */}
-                  <div className="col-md-4">
-                    <div className="d-flex align-items-center gap-3 p-3 bg-light rounded">
-                      <Clock className="text-primary" size={22} />
-                      <div>
-                        <p className="text-muted small mb-1">Duración</p>
-                        <p className="fw-semibold mb-0">{service.duration}</p>
+                <div className="card-body">
+                  <div className="row g-3">
+                    {/* Duración */}
+                    <div className="col-md-4">
+                      <div className="d-flex align-items-center gap-3 p-3 bg-light rounded">
+                        <Clock className="text-primary" size={22} />
+                        <div>
+                          <p className="text-muted small mb-1">Duración</p>
+                          <p className="fw-semibold mb-0">{service.duration}</p>
+                        </div>
                       </div>
                     </div>
-                  </div>
 
-                  {/* Precio */}
-                  <div className="col-md-4">
-                    <div className="d-flex align-items-center gap-3 p-3 bg-light rounded">
-                      <DollarSign className="text-success" size={22} />
-                      <div>
-                        <p className="text-muted small mb-1">Precio</p>
-                        <p className="fw-semibold mb-0">{service.price}</p>
+                    {/* Precio */}
+                    <div className="col-md-4">
+                      <div className="d-flex align-items-center gap-3 p-3 bg-light rounded">
+                        <DollarSign className="text-success" size={22} />
+                        <div>
+                          <p className="text-muted small mb-1">Precio</p>
+                          <p className="fw-semibold mb-0">{service.price}</p>
+                        </div>
                       </div>
                     </div>
-                  </div>
 
-                  {/* Estudiantes */}
-                  <div className="col-md-4">
-                    <div className="d-flex align-items-center gap-3 p-3 bg-light rounded">
-                      <Users className="text-info" size={22} />
-                      <div>
-                        <p className="text-muted small mb-1">Estudiantes</p>
-                        <p className="fw-semibold mb-0">{service.students}</p>
+                    {/* Estudiantes */}
+                    <div className="col-md-4">
+                      <div className="d-flex align-items-center gap-3 p-3 bg-light rounded">
+                        <Users className="text-info" size={22} />
+                        <div>
+                          <p className="text-muted small mb-1">Estudiantes</p>
+                          <p className="fw-semibold mb-0">{service.students}</p>
+                        </div>
                       </div>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
-          </div>
-        ))}
+          ))
+        )}
       </div>
     </div>
   );

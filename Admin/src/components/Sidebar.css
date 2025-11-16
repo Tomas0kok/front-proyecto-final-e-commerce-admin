@@ -10,6 +10,7 @@
 /* Transiciones suaves */
 aside {
   transition: width 0.3s ease, background-color 0.2s ease;
+  border-right: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 /* Enlaces del menú */
@@ -22,8 +23,7 @@ aside {
 
 /* Hover: un gris más claro para el fondo */
 .nav-link:hover {
-  background-color: rgba(255, 255, 255, 0.1) !important;
-  color: #ffffff !important;
+  background-color: rgba(255, 255, 255, 0.08) !important;
 }
 
 /* Enlace activo (la ruta actual) */
@@ -42,6 +42,11 @@ aside {
   transform: scale(1.1);
 }
 
+.nav-link:focus-visible {
+  outline: 2px solid #0d6efd; /* Azul bootstrap */
+  outline-offset: 2px;
+}
+
 /* Botón de colapsar */
 .btn-outline-light {
   color: #d1d1d1 !important;
@@ -52,6 +57,10 @@ aside {
   color: #fff !important;
 }
 
+.sidebar-collapsed .nav-link {
+  justify-content: center;
+}
+
 /* Transición al colapsar */
 .sidebar-collapsed .nav-link span {
   opacity: 0;
@@ -59,7 +68,34 @@ aside {
   transition: opacity 0.2s ease;
 }
 
+.sidebar-collapsed .nav-link svg {
+  margin-left: 2px; /* pequeño ajuste */
+  transition: margin 0.2s ease;
+}
+
 .sidebar-expanded .nav-link span {
   opacity: 1;
   transition: opacity 0.2s ease 0.1s;
+}
+
+.sidebar-section-title {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #a8a8a8;
+  margin: 1rem 0 0.5rem 0.75rem;
+  opacity: 0.8;
+}
+
+/* En pantallas chicas, que el ancho no cambie al colapsar */
+@media (max-width: 768px) {
+  .sidebar-expanded,
+  .sidebar-collapsed {
+    width: 220px; /* o 240px, como prefieras */
+  }
+
+  /* Opcional: suavizar la animación en mobile */
+  aside {
+    transition: background-color 0.2s ease;
+  }
 }

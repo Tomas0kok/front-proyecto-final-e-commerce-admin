@@ -1,0 +1,402 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap");
+
+/* 1. Paleta base (lo de arriba) */
+:root {
+  --eco-bg: #e8e4db;
+  --eco-text-main: #2d2d2d;
+  --eco-text-muted: #5a5a5a;
+
+  --eco-btn-bg: #a8d584;
+  --eco-btn-bg-hover: #92c268;
+  --eco-btn-text: #2d2d2d;
+
+  --eco-accent: #6fa84a;
+  --eco-accent-soft: #a8d5a3;
+
+  --eco-sem-good: #6fa84a;
+  --eco-sem-medium: #e4c65b;
+  --eco-sem-bad: #d9534f;
+}
+
+/* Evitar el salto de ancho al aparecer/desaparecer la scrollbar */
+html,
+body {
+  height: 100%;
+}
+
+body {
+  background-color: var(--eco-bg);
+  color: var(--eco-text-main);
+  font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+    sans-serif;
+}
+
+.bg-body-tertiary {
+  background-color: var(--eco-bg) !important;
+}
+
+/* 3. Re-mapear Bootstrap a estética eco (sin colores fuertes random) */
+:root {
+  --bs-body-bg: var(--eco-bg);
+  --bs-body-color: var(--eco-text-main);
+
+  /* Hacemos que primary y success sean verdes eco */
+  --bs-primary: var(--eco-accent);
+  --bs-success: var(--eco-accent);
+
+  /* Secondary como gris ecológico suave */
+  --bs-secondary: var(--eco-text-muted);
+
+  /* Info también verdoso, nada de celestitos */
+  --bs-info: #7fbf6c;
+
+  /* Warning / danger los dejamos para semáforo puntual */
+  --bs-warning: var(--eco-sem-medium);
+  --bs-danger: var(--eco-sem-bad);
+}
+
+.main-scroll {
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-gutter: stable;
+}
+
+.bg-pn {
+  background-color: var(--eco-accent);
+}
+
+/* 4. Botones eco por defecto en lugar del azul Bootstrap */
+.btn-primary {
+  background-color: var(--eco-btn-bg) !important;
+  border-color: var(--eco-btn-bg) !important;
+  color: var(--eco-btn-text) !important;
+}
+
+.btn-primary:hover,
+.btn-primary:focus {
+  background-color: var(--eco-btn-bg-hover) !important;
+  border-color: var(--eco-btn-bg-hover) !important;
+  color: var(--eco-btn-text) !important;
+}
+
+.btn-outline-secondary {
+  color: var(--eco-text-muted) !important;
+  border-color: rgba(0, 0, 0, 0.08) !important;
+}
+
+.btn-outline-secondary:hover,
+.btn-outline-secondary:focus {
+  background-color: rgba(0, 0, 0, 0.03) !important;
+  color: var(--eco-text-main) !important;
+}
+
+/* Botones de filtro tipo "chips" */
+.btn-filter {
+  border-radius: 999px;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  background-color: transparent;
+  color: var(--eco-text-muted);
+  padding: 0.3rem 0.9rem;
+  font-size: 0.85rem;
+  font-weight: 500;
+  transition: background-color 0.15s ease, color 0.15s ease,
+    border-color 0.15s ease;
+}
+
+.btn-filter:hover,
+.btn-filter:focus {
+  background-color: rgba(0, 0, 0, 0.03);
+  color: var(--eco-text-main);
+  border-color: rgba(0, 0, 0, 0.18);
+}
+
+/* Activo: chip relleno suave eco */
+.btn-filter-active,
+.btn-filter.btn-filter-active:hover,
+.btn-filter.btn-filter-active:focus {
+  background-color: var(--eco-accent-soft); /* #a8d5a3 */
+  border-color: var(--eco-accent); /* #6fa84a */
+  color: var(--eco-text-main);
+}
+
+/* Botón ghost neutro para acciones secundarias (Editar, Ver, etc.) */
+.btn-ghost-eco {
+  background-color: transparent;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  color: var(--eco-text-muted);
+  padding: 0.25rem 0.75rem;
+  font-size: 0.85rem;
+  font-weight: 500;
+  border-radius: 999px;
+  transition: background-color 0.15s ease, color 0.15s ease,
+    border-color 0.15s ease;
+}
+
+.btn-ghost-eco:hover,
+.btn-ghost-eco:focus {
+  background-color: rgba(0, 0, 0, 0.03);
+  border-color: rgba(0, 0, 0, 0.16);
+  color: var(--eco-text-main);
+}
+
+/* Cards con más contraste sobre el fondo eco */
+.card {
+  background-color: #fdfbf6; /* un tono más claro que #e8e4db */
+  border-radius: 0.9rem;
+  border: 1px solid rgba(0, 0, 0, 0.03);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
+}
+
+.card .bg-light {
+  background-color: #f5f0e5 !important; /* más claro que el body */
+  border-radius: 0.75rem;
+}
+
+.card-eco-emphasis {
+  border-top: 4px solid var(--eco-accent); /* #6fa84a */
+}
+
+.card-header {
+  background-color: #f7f4ed !important;
+}
+
+/* 6. Badges “semáforo” solo para cantidad / duración */
+.badge-quantity-good {
+  background-color: var(--eco-sem-good);
+  color: #ffffff;
+}
+
+.badge-quantity-medium {
+  background-color: var(--eco-sem-medium);
+  color: #2d2d2d;
+}
+
+.badge-quantity-low {
+  background-color: var(--eco-sem-bad);
+  color: #ffffff;
+}
+
+/* Badges neutros eco */
+.badge-eco {
+  background-color: var(--eco-accent-soft);
+  color: var(--eco-text-main);
+}
+
+/* 7. Texto secundario */
+.text-muted {
+  color: var(--eco-text-muted) !important;
+}
+
+/* 8. Iconos de stats / detalles */
+.text-primary,
+.text-success,
+.text-info {
+  color: var(--eco-accent) !important;
+}
+
+/* Warning/danger se usan solo en indicadores muy puntuales */
+
+/* Semáforo para cambios */
+.text-semaforo-good {
+  color: var(--eco-sem-good) !important; /* verde eco */
+}
+
+.text-semaforo-medium {
+  color: var(--eco-sem-medium) !important; /* amarillo eco */
+}
+
+.text-semaforo-bad {
+  color: var(--eco-sem-bad) !important; /* rojo eco */
+}
+
+/* TABS ECO – más contraste y overrides fuertes a Bootstrap */
+.eco-tabs.nav-tabs {
+  background-color: #f5f0e5;
+  padding: 0.4rem 0.75rem 0.3rem 0.75rem;
+
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 0.75rem;
+}
+
+/* Base de todos los tabs */
+.eco-tabs.nav-tabs .nav-link {
+  border: none !important;
+  border-bottom: 3px solid transparent !important;
+  background-color: transparent !important;
+  color: var(--eco-text-main) !important;
+  opacity: 0.7;
+  font-weight: 500;
+
+  margin-bottom: 0 !important;
+  padding: 0.5rem 1rem;
+  display: inline-flex;
+  align-items: center;
+}
+
+/* Íconos */
+.eco-tabs.nav-tabs .nav-link svg {
+  flex-shrink: 0;
+}
+
+/* Hover inactivo: que se note bien */
+.eco-tabs.nav-tabs .nav-link:hover {
+  opacity: 0.9;
+  background-color: rgba(255, 255, 255, 0.4) !important;
+  border-radius: 0.75rem 0.75rem 0 0;
+}
+
+/* Tab ACTIVO estilo pill eco */
+.eco-tabs.nav-tabs .nav-link.active {
+  background-color: var(--eco-accent-soft) !important; /* #a8d5a3 */
+  color: var(--eco-text-main) !important;
+  border-radius: 0.75rem;
+  border: 1px solid var(--eco-accent); /* verde más fuerte */
+  opacity: 1;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
+
+  /* Quitamos la línea verde de abajo */
+  border-bottom-width: 1px !important;
+}
+
+.eco-content-panel {
+  background-color: #f7f3ec; /* tono muy suave diferente del body */
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+  min-height: 50vh;
+}
+
+/* Panel emergente de filtros en Productos */
+.eco-filters-panel {
+  background-color: #f7f3ec; /* un toque más claro que el body */
+  border-radius: 0.75rem;
+  padding: 1rem 1.25rem;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+/* Labels de los filtros */
+.eco-filters-panel .form-label {
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--eco-text-muted);
+}
+
+/* Selects eco (solo dentro del panel de filtros) */
+.eco-filters-panel .form-select {
+  border-radius: 999px;
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  font-size: 0.85rem;
+  padding: 0.35rem 0.75rem;
+  background-color: #fdfbf6;
+}
+
+.eco-filters-panel .form-select:focus {
+  border-color: var(--eco-accent);
+  box-shadow: 0 0 0 0.1rem rgba(111, 168, 74, 0.15);
+}
+
+/* Checkbox eco */
+.eco-filters-panel .form-check-input {
+  border-radius: 4px;
+  border: 1px solid rgba(0, 0, 0, 0.25);
+}
+
+.eco-filters-panel .form-check-input:checked {
+  background-color: var(--eco-accent);
+  border-color: var(--eco-accent);
+  box-shadow: 0 0 0 0.1rem rgba(111, 168, 74, 0.25);
+}
+
+/* Texto del checkbox */
+.eco-filters-panel .form-check-label {
+  font-size: 0.8rem;
+  color: var(--eco-text-muted);
+}
+
+/* Botón Filtros cuando está activo */
+.btn-ghost-eco-active {
+  background-color: rgba(168, 213, 132, 0.25); /* eco suave */
+  border-color: rgba(111, 168, 74, 0.6);
+}
+
+/* Contenedor dropdown eco */
+.eco-dropdown {
+  position: relative;
+  display: inline-block;
+  width: 100%;
+}
+
+/* Botón que muestra el valor seleccionado */
+.eco-dropdown-toggle {
+  width: 100%;
+  border-radius: 999px;
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  background-color: #fdfbf6;
+  padding: 0.35rem 0.75rem;
+  font-size: 0.85rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  color: var(--eco-text-main);
+  cursor: pointer;
+  transition: background-color 0.15s ease, border-color 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+.eco-dropdown-toggle:hover,
+.eco-dropdown-toggle:focus {
+  background-color: #f7f3ec;
+  border-color: var(--eco-accent);
+  box-shadow: 0 0 0 0.1rem rgba(111, 168, 74, 0.15);
+}
+
+.eco-dropdown-caret {
+  font-size: 0.7rem;
+  opacity: 0.7;
+}
+
+/* Menú de opciones */
+.eco-dropdown-menu {
+  margin-top: 0.35rem;
+  position: relative; /* si más adelante lo querés flotante, pasamos a absolute */
+  width: 100%;
+  background-color: #fdfbf6;
+  border-radius: 0.75rem;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+  padding: 0.25rem;
+}
+
+/* Opción individual */
+.eco-dropdown-item {
+  width: 100%;
+  text-align: left;
+  border: none;
+  background-color: transparent;
+  padding: 0.35rem 0.6rem;
+  border-radius: 0.5rem;
+  font-size: 0.85rem;
+  color: var(--eco-text-main);
+  cursor: pointer;
+  transition: background-color 0.12s ease, color 0.12s ease;
+}
+
+.eco-dropdown-item:hover {
+  background-color: rgba(168, 213, 132, 0.25); /* verde suave */
+}
+
+/* Opción seleccionada */
+.eco-dropdown-item-active {
+  background-color: var(--eco-accent-soft);
+  color: var(--eco-text-main);
+  font-weight: 500;
+}
+
+.products-search-input:focus {
+  border-color: var(--eco-accent);
+  box-shadow: 0 0 0 0.16rem rgba(111, 168, 74, 0.35);
+  outline: none;
+}

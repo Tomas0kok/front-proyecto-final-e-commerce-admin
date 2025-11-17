@@ -1,81 +1,110 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import FiltersPanel from "../components/Product/FiltersPanel";
 import ProductCard from "../components/Product/ProductCard";
 import { Plus, Search, SlidersHorizontal } from "lucide-react";
 
-/* =========================
- *  Datos mock
- * =======================*/
-const mockProducts = [
-  {
-    id: 1,
-    name: "Bolsa Reutilizable Eco",
-    category: "Accesorios",
-    price: "$20.00",
-    stock: 150,
-    status: "active",
-    image: "🛍️",
-  },
-  {
-    id: 2,
-    name: "Kit de Compostaje",
-    category: "Jardinería",
-    price: "$40.00",
-    stock: 75,
-    status: "active",
-    image: "🌱",
-  },
-  {
-    id: 3,
-    name: "Botellas de Vidrio Set",
-    category: "Cocina",
-    price: "$25.00",
-    stock: 200,
-    status: "active",
-    image: "🍾",
-  },
-  {
-    id: 4,
-    name: "Papel Reciclado Pack",
-    category: "Oficina",
-    price: "$15.00",
-    stock: 0,
-    status: "out_of_stock",
-    image: "📄",
-  },
-];
+import { getProducts } from "../services/productsService";
 
-const parsePrice = (priceStr) =>
-  Number(priceStr.replace("$", "").replace(",", "").trim()) || 0;
+// parsePrice soporta número o string
+const parsePrice = (price) => {
+  if (typeof price === "number") return price;
+  if (!price) return 0;
+  return Number(String(price).replace("$", "").replace(",", "").trim()) || 0;
+};
+
+// Normaliza la categoría a un string legible
+function getCategoryName(product) {
+  if (!product) return "";
+
+  // Caso viejo (mock): category ya es string
+  if (typeof product.category === "string") {
+    return product.category;
+  }
+
+  // Caso común backend: category es objeto { id, name }
+  if (product.category && typeof product.category === "object") {
+    return product.category.name || product.category.title || "";
+  }
+
+  // Otras variantes típicas
+  if (typeof product.category_name === "string") return product.category_name;
+  if (typeof product.categoryName === "string") return product.categoryName;
+
+  return "";
+}
 
 const Products = () => {
+  const [products, setProducts] = useState([]);
+
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [inStockOnly, setInStockOnly] = useState(false);
   const [sortBy, setSortBy] = useState("none");
   const [showFilters, setShowFilters] = useState(false);
 
-  const categories = useMemo(() => {
-    const set = new Set(mockProducts.map((p) => p.category));
-    return ["all", ...Array.from(set)];
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  /* =========================
+   *  Cargar productos desde API
+   * =======================*/
+  useEffect(() => {
+    let isMounted = true;
+
+    async function fetchData() {
+      try {
+        setLoading(true);
+        const data = await getProducts(); // /api/store/products
+        if (isMounted) setProducts(data);
+      } catch (err) {
+        console.error(err);
+        if (isMounted) setError("No se pudieron cargar los productos.");
+      } finally {
+        if (isMounted) setLoading(false);
+      }
+    }
+
+    fetchData();
+
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
+  /* =========================
+   *  Categorías dinámicas desde la API
+   * =======================*/
+  const categories = useMemo(() => {
+    const set = new Set(products.map((p) => p.category).filter(Boolean));
+    return ["all", ...Array.from(set)];
+  }, [products]);
+
+  /* =========================
+   *  Filtros + ordenamiento
+   * =======================*/
   const filteredProducts = useMemo(() => {
-    const q = searchTerm.toLowerCase();
+    const q = searchTerm.toLowerCase().trim();
 
-    let result = mockProducts.filter((product) => {
-      const matchesSearch =
-        product.name.toLowerCase().includes(q) ||
-        product.category.toLowerCase().includes(q);
+    let result = products.filter((product) => {
+      const name = (product.name || "").toLowerCase();
+      const category = getCategoryName(product).toLowerCase();
 
+      // Buscar por nombre o categoría
+      const matchesSearch = !q || name.includes(q) || category.includes(q);
+
+      // Filtro de categoría (si viene como string o como objeto, lo manejamos)
       const matchesCategory =
-        selectedCategory === "all" || product.category === selectedCategory;
+        selectedCategory === "all" ||
+        getCategoryName(product).toLowerCase() ===
+          selectedCategory.toLowerCase();
 
-      const matchesStock = !inStockOnly || product.stock > 0;
+      // Filtro stock
+      const matchesStock = !inStockOnly || (product.stock || 0) > 0;
 
       return matchesSearch && matchesCategory && matchesStock;
     });
 
+    // Ordenamiento por precio
     if (sortBy === "price_asc") {
       result = [...result].sort(
         (a, b) => parsePrice(a.price) - parsePrice(b.price)
@@ -87,7 +116,7 @@ const Products = () => {
     }
 
     return result;
-  }, [searchTerm, selectedCategory, inStockOnly, sortBy]);
+  }, [products, searchTerm, selectedCategory, inStockOnly, sortBy]);
 
   const handleClearFilters = () => {
     setSelectedCategory("all");
@@ -96,10 +125,12 @@ const Products = () => {
   };
 
   const getStockBadgeClass = (product) => {
-    if (product.status !== "active" || product.stock === 0) {
+    const stock = product.stock || 0;
+
+    if (product.status !== "active" || stock === 0) {
       return "badge-quantity-low";
     }
-    if (product.stock < 50) return "badge-quantity-medium";
+    if (stock < 50) return "badge-quantity-medium";
     return "badge-quantity-good";
   };
 
@@ -152,7 +183,7 @@ const Products = () => {
             </div>
           </div>
 
-          {/* Panel de filtros desplegable */}
+          {/* Panel de filtros */}
           {showFilters && (
             <FiltersPanel
               categories={categories}
@@ -168,24 +199,35 @@ const Products = () => {
         </div>
       </div>
 
+      {/* Loading y errores */}
+      {loading && (
+        <div className="text-center text-muted py-4">Cargando productos...</div>
+      )}
+
+      {error && !loading && (
+        <div className="text-center text-danger py-4">{error}</div>
+      )}
+
       {/* Products Grid */}
-      <div className="row g-4">
-        {filteredProducts.length === 0 ? (
-          <div className="col-12">
-            <p className="text-muted text-center mb-0">
-              No se encontraron productos con los filtros aplicados.
-            </p>
-          </div>
-        ) : (
-          filteredProducts.map((product) => (
-            <ProductCard
-              key={product.id}
-              product={product}
-              getStockBadgeClass={getStockBadgeClass}
-            />
-          ))
-        )}
-      </div>
+      {!loading && !error && (
+        <div className="row g-4">
+          {filteredProducts.length === 0 ? (
+            <div className="col-12">
+              <p className="text-muted text-center mb-0">
+                No se encontraron productos con los filtros aplicados.
+              </p>
+            </div>
+          ) : (
+            filteredProducts.map((product) => (
+              <ProductCard
+                key={product.id}
+                product={{ product, category: getCategoryName(product) }}
+                getStockBadgeClass={getStockBadgeClass}
+              />
+            ))
+          )}
+        </div>
+      )}
     </div>
   );
 };

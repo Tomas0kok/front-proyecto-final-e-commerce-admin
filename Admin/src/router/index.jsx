@@ -1,3 +1,4 @@
+// src/router/index.jsx
 import { createBrowserRouter, Navigate } from "react-router-dom";
 import Layout from "../components/Layout";
 import Dashboard from "../pages/Dashboard";
@@ -6,29 +7,42 @@ import Content from "../pages/Content";
 import Products from "../pages/Products";
 import Services from "../pages/Services";
 import NotFound from "../pages/Notfound";
+import Login from "../pages/Login";
+import ProtectedRoute from "../components/ProtectedRoute";
 
 const router = createBrowserRouter([
-  // 🔹 Redirección global
+  // Redirección raíz → admin dashboard
   {
     path: "/",
     element: <Navigate to="/admin/dashboard" replace />,
   },
 
-  // 🔹 Rutas del panel admin
+  // Login público
+  {
+    path: "/login",
+    element: <Login />,
+  },
+
+  // Bloque protegido /admin/*
   {
     path: "/admin",
-    element: <Layout />,
+    element: <ProtectedRoute />, // chequea sesión
     children: [
-      { path: "dashboard", element: <Dashboard /> },
-      { path: "subscriptions", element: <Subscriptions /> },
-      { path: "content", element: <Content /> },
-      { path: "products", element: <Products /> },
-      { path: "services", element: <Services /> },
-      { path: "*", element: <NotFound /> },
+      {
+        element: <Layout />, // Header + Sidebar + <Outlet />
+        children: [
+          { path: "dashboard", element: <Dashboard /> },
+          { path: "subscriptions", element: <Subscriptions /> },
+          { path: "content", element: <Content /> },
+          { path: "products", element: <Products /> },
+          { path: "services", element: <Services /> },
+          { path: "*", element: <NotFound /> },
+        ],
+      },
     ],
   },
 
-  // 🔹 404 global para rutas fuera de /admin
+  // 404 global
   {
     path: "*",
     element: <NotFound />,

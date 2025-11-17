@@ -1,54 +1,74 @@
+import { useEffect, useState, useMemo } from "react";
 import { Plus, Check } from "lucide-react";
+import { getActivePlans } from "../services/subscriptionsService";
 
-const mockPlans = [
-  {
-    id: 1,
-    name: "Plan Básico",
-    price: "$9.99",
-    period: "mes",
-    subscribers: 450,
-    features: [
-      "Acceso a contenido básico",
-      "1 curso gratis al mes",
-      "Descuento 10% en productos",
-      "Newsletter semanal",
-    ],
-    color: "text-info",
-  },
-  {
-    id: 2,
-    name: "Plan Premium",
-    price: "$19.99",
-    period: "mes",
-    subscribers: 234,
-    features: [
-      "Todo lo del Plan Básico",
-      "3 cursos gratis al mes",
-      "Descuento 20% en productos",
-      "Acceso a talleres exclusivos",
-      "Consultoría personalizada",
-    ],
-    color: "text-primary",
-  },
-  {
-    id: 3,
-    name: "Plan Empresarial",
-    price: "$49.99",
-    period: "mes",
-    subscribers: 89,
-    features: [
-      "Todo lo del Plan Premium",
-      "Cursos ilimitados",
-      "Descuento 30% en productos",
-      "Soporte prioritario",
-      "Talleres in-company",
-      "Certificaciones oficiales",
-    ],
-    color: "text-warning",
-  },
-];
+const formatPrice = (price) => {
+  if (price == null) return "-";
+  if (typeof price === "number") {
+    return `$${price.toFixed(2)}`;
+  }
+  return String(price);
+};
+
+// Mock para métricas avanzadas del resumen (de momento)
+const mockMonthlyRevenue = "$12,458";
+const mockNewThisMonth = "+89";
+const mockRetention = "94%";
 
 const Subscriptions = () => {
+  const [plans, setPlans] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  /* =========================
+   *  Cargar planes desde la API
+   * =======================*/
+  useEffect(() => {
+    let isMounted = true;
+
+    async function fetchData() {
+      try {
+        setLoading(true);
+        setError(null);
+        const data = await getActivePlans(); // /api/subscriptions/plans
+        if (isMounted) {
+          setPlans(data);
+        }
+      } catch (err) {
+        console.error(err);
+        if (isMounted) {
+          setError("No se pudieron cargar los planes de suscripción.");
+        }
+      } finally {
+        if (isMounted) {
+          setLoading(false);
+        }
+      }
+    }
+
+    fetchData();
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  /* =========================
+   *  Total de suscriptores (real)
+   * =======================*/
+  const totalSubscribers = useMemo(
+    () => plans.reduce((acc, plan) => acc + (plan.subscribers || 0), 0),
+    [plans]
+  );
+
+  // Paleta de colores simple basada en posición, como el mock original
+  const getPlanColorClass = (index) => {
+    if (index === 0) return "text-info";
+    if (index === 1) return "text-primary";
+    if (index === 2) return "text-warning";
+    return "text-primary";
+  };
+
   return (
     <div className="container my-5">
       {/* Header */}
@@ -64,43 +84,73 @@ const Subscriptions = () => {
         </button>
       </div>
 
+      {error && (
+        <div className="alert alert-danger" role="alert">
+          {error}
+        </div>
+      )}
+
       {/* Plans Grid */}
       <div className="row g-4 mb-5">
-        {mockPlans.map((plan) => (
-          <div key={plan.id} className="col-md-4">
-            <div className="card border-0 shadow-sm h-100 text-center transition-transform">
-              <div className="card-header bg-white border-0 pb-0">
-                <h4 className="fw-bold mb-2">{plan.name}</h4>
-                <div>
-                  <span className={`fs-2 fw-bold ${plan.color}`}>
-                    {plan.price}
+        {loading && plans.length === 0 ? (
+          <div className="col-12">
+            <p className="text-muted text-center mb-0">
+              Cargando planes de suscripción...
+            </p>
+          </div>
+        ) : plans.length === 0 ? (
+          <div className="col-12">
+            <p className="text-muted text-center mb-0">
+              No hay planes activos configurados.
+            </p>
+          </div>
+        ) : (
+          plans.map((plan, idx) => (
+            <div key={plan.id} className="col-md-4">
+              <div className="card border-0 shadow-sm h-100 text-center transition-transform">
+                <div className="card-header bg-white border-0 pb-0">
+                  <h4 className="fw-bold mb-2">{plan.name}</h4>
+                  <div>
+                    <span className={`fs-2 fw-bold ${getPlanColorClass(idx)}`}>
+                      {formatPrice(plan.price)}
+                    </span>
+                    <span className="text-muted">/{plan.period}</span>
+                  </div>
+                  <span className="badge bg-secondary mt-2">
+                    {plan.subscribers} suscriptores
                   </span>
-                  <span className="text-muted">/{plan.period}</span>
                 </div>
-                <span className="badge bg-secondary mt-2">
-                  {plan.subscribers} suscriptores
-                </span>
-              </div>
 
-              <div className="card-body">
-                <ul className="list-unstyled text-start mb-4">
-                  {plan.features.map((feature, idx) => (
-                    <li key={idx} className="d-flex align-items-start mb-2">
-                      <Check
-                        size={18}
-                        className="text-success flex-shrink-0 me-2 mt-1"
-                      />
-                      <span className="text-dark small">{feature}</span>
-                    </li>
-                  ))}
-                </ul>
-                <button className="btn btn-ghost-eco btn-sm">
-                  Editar Plan
-                </button>
+                <div className="card-body">
+                  <ul className="list-unstyled text-start mb-4">
+                    {plan.features.map((feature, featureIdx) => (
+                      <li
+                        key={featureIdx}
+                        className="d-flex align-items-start mb-2"
+                      >
+                        <Check
+                          size={18}
+                          className="text-success flex-shrink-0 me-2 mt-1"
+                        />
+                        <span className="text-dark small">
+                          {feature || "Característica del plan"}
+                        </span>
+                      </li>
+                    ))}
+                    {plan.features.length === 0 && (
+                      <li className="text-muted small">
+                        Este plan aún no tiene características cargadas.
+                      </li>
+                    )}
+                  </ul>
+                  <button className="btn btn-ghost-eco btn-sm">
+                    Editar Plan
+                  </button>
+                </div>
               </div>
             </div>
-          </div>
-        ))}
+          ))
+        )}
       </div>
 
       {/* Subscribers Overview */}
@@ -113,25 +163,29 @@ const Subscriptions = () => {
             <div className="col-md-3">
               <div className="p-3 bg-light rounded">
                 <p className="text-muted small mb-1">Total Suscriptores</p>
-                <h4 className="fw-bold mb-0">773</h4>
+                <h4 className="fw-bold mb-0">{totalSubscribers}</h4>
               </div>
             </div>
             <div className="col-md-3">
               <div className="p-3 bg-light rounded">
                 <p className="text-muted small mb-1">Ingresos Mensuales</p>
-                <h4 className="fw-bold text-success mb-0">$12,458</h4>
+                <h4 className="fw-bold text-success mb-0">
+                  {mockMonthlyRevenue}
+                </h4>
               </div>
             </div>
             <div className="col-md-3">
               <div className="p-3 bg-light rounded">
                 <p className="text-muted small mb-1">Nuevos este mes</p>
-                <h4 className="fw-bold text-primary mb-0">+89</h4>
+                <h4 className="fw-bold text-primary mb-0">
+                  {mockNewThisMonth}
+                </h4>
               </div>
             </div>
             <div className="col-md-3">
               <div className="p-3 bg-light rounded">
                 <p className="text-muted small mb-1">Tasa de Retención</p>
-                <h4 className="fw-bold text-info mb-0">94%</h4>
+                <h4 className="fw-bold text-info mb-0">{mockRetention}</h4>
               </div>
             </div>
           </div>

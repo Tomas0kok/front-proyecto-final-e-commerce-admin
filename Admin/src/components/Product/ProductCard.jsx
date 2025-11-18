@@ -1,17 +1,41 @@
 import { MoreVertical, Edit, Trash } from "lucide-react";
 
-const ProductCard = ({ product, getStockBadgeClass }) => {
+const ProductCard = ({ product, category, getStockBadgeClass }) => {
+  const stockBadgeClass = getStockBadgeClass(product);
+  const displayCategory = category || "";
+
+  // Imagen: primero backend (image_url), luego mock (image), luego placeholder
+  const fallbackImage =
+    "https://via.placeholder.com/300x200.png?text=Producto+eco";
+  const imageSrc = product.image_url || product.image || fallbackImage;
+
+  // Precio: soporta número o string
+  const priceText =
+    typeof product.price === "number"
+      ? `$${product.price.toFixed(2)}`
+      : product.price || "$0.00";
+
   return (
     <div className="col-12 col-md-6 col-lg-3">
       <div className="card h-100 border-0 shadow-sm">
-        <div className="d-flex align-items-center justify-content-center bg-light display-3 py-4">
-          {product.image}
+        {/* Imagen */}
+        <div className="ratio ratio-4x3 bg-light">
+          <img
+            src={imageSrc}
+            alt={product.name}
+            className="img-fluid object-fit-cover rounded-top"
+          />
         </div>
+
         <div className="card-body">
           <div className="d-flex justify-content-between align-items-start">
             <div>
               <h5 className="card-title fw-semibold mb-1">{product.name}</h5>
-              <p className="text-muted small mb-2">{product.category}</p>
+
+              {/* 👇 Acá usamos SIEMPRE el string, nunca el objeto */}
+              {displayCategory && (
+                <p className="text-muted small mb-2">{displayCategory}</p>
+              )}
             </div>
 
             {/* Dropdown Menu */}
@@ -40,12 +64,11 @@ const ProductCard = ({ product, getStockBadgeClass }) => {
           </div>
 
           <div className="d-flex justify-content-between align-items-center mt-3">
-            <p className="fw-bold text-primary mb-0">{product.price}</p>
-            <span
-              className={`badge rounded-pill ${getStockBadgeClass(product)}`}
-            >
+            <p className="fw-bold text-primary mb-0">{priceText}</p>
+
+            <span className={`badge rounded-pill ${stockBadgeClass}`}>
               {product.status === "active"
-                ? `Stock: ${product.stock}`
+                ? `Stock: ${product.stock ?? 0}`
                 : "Sin stock"}
             </span>
           </div>

@@ -1,5 +1,6 @@
 // src/router/index.jsx
 import { createBrowserRouter, Navigate } from "react-router-dom";
+import ProtectedRoute from "../components/ProtectedRoute";
 import Layout from "../components/Layout";
 import Dashboard from "../pages/Dashboard";
 import Subscriptions from "../pages/Subscriptions";
@@ -8,7 +9,9 @@ import Products from "../pages/Products";
 import Services from "../pages/Services";
 import NotFound from "../pages/Notfound";
 import Login from "../pages/Login";
-import ProtectedRoute from "../components/ProtectedRoute";
+
+import NewProductModal from "../pages/NewModals/NewProductModal";
+import NewServiceModal from "../pages/NewModals/NewServiceModal";
 
 const router = createBrowserRouter([
   // Redirección raíz → admin dashboard
@@ -34,8 +37,16 @@ const router = createBrowserRouter([
           { path: "dashboard", element: <Dashboard /> },
           { path: "subscriptions", element: <Subscriptions /> },
           { path: "content", element: <Content /> },
-          { path: "products", element: <Products /> },
-          { path: "services", element: <Services /> },
+          {
+            path: "products",
+            element: <Products />,
+            children: [{ path: "new", element: <NewProductModal /> }],
+          },
+          {
+            path: "services",
+            element: <Services />,
+            children: [{ path: "new", element: <NewServiceModal /> }],
+          },
           { path: "*", element: <NotFound /> },
         ],
       },

@@ -400,3 +400,60 @@ body {
   box-shadow: 0 0 0 0.16rem rgba(111, 168, 74, 0.35);
   outline: none;
 }
+
+/* Fondo oscuro pantalla completa */
+.bd-modal-backdrop {
+  position: fixed;
+  inset: 0; /* top:0; right:0; bottom:0; left:0 */
+  background: rgba(15, 23, 42, 0.65); /* negro azulado translúcido */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1050; /* por encima de casi todo */
+}
+
+/* Contenedor del modal */
+.bd-modal-dialog {
+  background: #ffffff;
+  border-radius: 1rem;
+  box-shadow: 0 20px 45px rgba(15, 23, 42, 0.35);
+  max-height: 90vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Tamaños reutilizables */
+.bd-modal-sm {
+  width: min(400px, 100% - 32px);
+}
+
+.bd-modal-md {
+  width: min(600px, 100% - 32px);
+}
+
+.bd-modal-lg {
+  width: min(900px, 100% - 32px);
+}
+
+/* Header del modal */
+.bd-modal-header {
+  padding: 1rem 1.25rem;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.35);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+/* Body con scroll si se pasa */
+.bd-modal-body {
+  padding: 1.25rem;
+  overflow-y: auto;
+}
+
+.form-control:focus {
+  border-color: var(--eco-accent);
+  box-shadow: 0 0 0 0.16rem rgba(111, 168, 74, 0.35);
+  outline: none;
+}

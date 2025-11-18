@@ -1,8 +1,9 @@
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo, useEffect, useCallback } from "react";
+
 import FiltersPanel from "../components/Product/FiltersPanel";
 import ProductCard from "../components/Product/ProductCard";
 import { Plus, Search, SlidersHorizontal } from "lucide-react";
-
+import { useNavigate, Outlet } from "react-router-dom";
 import { getProducts } from "../services/productsService";
 
 // parsePrice soporta número o string
@@ -45,37 +46,38 @@ const Products = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  const navigate = useNavigate();
+
   /* =========================
    *  Cargar productos desde API
    * =======================*/
-  useEffect(() => {
-    let isMounted = true;
-
-    async function fetchData() {
-      try {
-        setLoading(true);
-        const data = await getProducts(); // /api/store/products
-        if (isMounted) setProducts(data);
-      } catch (err) {
-        console.error(err);
-        if (isMounted) setError("No se pudieron cargar los productos.");
-      } finally {
-        if (isMounted) setLoading(false);
-      }
+  const fetchProducts = useCallback(async () => {
+    try {
+      setLoading(true);
+      const data = await getProducts(); // /api/store/products
+      setProducts(data);
+      setError(null);
+    } catch (err) {
+      console.error(err);
+      setError("No se pudieron cargar los productos.");
+    } finally {
+      setLoading(false);
     }
-
-    fetchData();
-
-    return () => {
-      isMounted = false;
-    };
   }, []);
+
+  useEffect(() => {
+    fetchProducts();
+  }, [fetchProducts]);
 
   /* =========================
    *  Categorías dinámicas desde la API
    * =======================*/
   const categories = useMemo(() => {
-    const set = new Set(products.map((p) => p.category).filter(Boolean));
+    const set = new Set(
+      products
+        .map((p) => getCategoryName(p)) // 👈 usamos el helper
+        .filter((name) => !!name)
+    );
     return ["all", ...Array.from(set)];
   }, [products]);
 
@@ -135,100 +137,110 @@ const Products = () => {
   };
 
   return (
-    <div className="container my-5">
-      {/* Header */}
-      <div className="d-flex justify-content-between align-items-center mb-4">
-        <div>
-          <h1 className="fw-bold">Productos</h1>
-          <p className="text-muted mb-0">
-            Gestiona tu catálogo de productos ecológicos
-          </p>
-        </div>
-        <button className="btn btn-primary d-flex align-items-center gap-2">
-          <Plus size={18} /> Nuevo Producto
-        </button>
-      </div>
-
-      {/* Search + botón de filtros */}
-      <div className="card shadow-sm mb-4">
-        <div className="card-body">
-          <div className="row g-3 align-items-center">
-            {/* Búsqueda */}
-            <div className="col-12 col-md-8 position-relative">
-              <Search
-                size={18}
-                className="position-absolute top-50 translate-middle-y ms-3 text-muted"
-              />
-              <input
-                type="text"
-                placeholder="Buscar por nombre o categoría..."
-                className="form-control ps-5 products-search-input"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-              />
-            </div>
-
-            {/* Botón de filtros */}
-            <div className="col-12 col-md-4 d-flex justify-content-md-end">
-              <button
-                type="button"
-                className={`btn btn-ghost-eco d-flex align-items-center gap-2 ${
-                  showFilters ? "btn-ghost-eco-active" : ""
-                }`}
-                onClick={() => setShowFilters((prev) => !prev)}
-              >
-                <SlidersHorizontal size={16} />
-                <span>Filtros</span>
-              </button>
-            </div>
+    <>
+      <div className="container my-5">
+        {/* Header */}
+        <div className="d-flex justify-content-between align-items-center mb-4">
+          <div>
+            <h1 className="fw-bold">Productos</h1>
+            <p className="text-muted mb-0">
+              Gestiona tu catálogo de productos ecológicos
+            </p>
           </div>
-
-          {/* Panel de filtros */}
-          {showFilters && (
-            <FiltersPanel
-              categories={categories}
-              selectedCategory={selectedCategory}
-              setSelectedCategory={setSelectedCategory}
-              sortBy={sortBy}
-              setSortBy={setSortBy}
-              inStockOnly={inStockOnly}
-              setInStockOnly={setInStockOnly}
-              onClear={handleClearFilters}
-            />
-          )}
+          <button
+            type="button"
+            onClick={() => navigate("/admin/products/new")}
+            className="btn btn-primary d-flex align-items-center gap-2"
+          >
+            <Plus size={18} /> Nuevo Producto
+          </button>
         </div>
-      </div>
 
-      {/* Loading y errores */}
-      {loading && (
-        <div className="text-center text-muted py-4">Cargando productos...</div>
-      )}
+        {/* Search + botón de filtros */}
+        <div className="card shadow-sm mb-4">
+          <div className="card-body">
+            <div className="row g-3 align-items-center">
+              {/* Búsqueda */}
+              <div className="col-12 col-md-8 position-relative">
+                <Search
+                  size={18}
+                  className="position-absolute top-50 translate-middle-y ms-3 text-muted"
+                />
+                <input
+                  type="text"
+                  placeholder="Buscar por nombre o categoría..."
+                  className="form-control ps-5 products-search-input"
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                />
+              </div>
 
-      {error && !loading && (
-        <div className="text-center text-danger py-4">{error}</div>
-      )}
-
-      {/* Products Grid */}
-      {!loading && !error && (
-        <div className="row g-4">
-          {filteredProducts.length === 0 ? (
-            <div className="col-12">
-              <p className="text-muted text-center mb-0">
-                No se encontraron productos con los filtros aplicados.
-              </p>
+              {/* Botón de filtros */}
+              <div className="col-12 col-md-4 d-flex justify-content-md-end">
+                <button
+                  type="button"
+                  className={`btn btn-ghost-eco d-flex align-items-center gap-2 ${
+                    showFilters ? "btn-ghost-eco-active" : ""
+                  }`}
+                  onClick={() => setShowFilters((prev) => !prev)}
+                >
+                  <SlidersHorizontal size={16} />
+                  <span>Filtros</span>
+                </button>
+              </div>
             </div>
-          ) : (
-            filteredProducts.map((product) => (
-              <ProductCard
-                key={product.id}
-                product={{ product, category: getCategoryName(product) }}
-                getStockBadgeClass={getStockBadgeClass}
+
+            {/* Panel de filtros */}
+            {showFilters && (
+              <FiltersPanel
+                categories={categories}
+                selectedCategory={selectedCategory}
+                setSelectedCategory={setSelectedCategory}
+                sortBy={sortBy}
+                setSortBy={setSortBy}
+                inStockOnly={inStockOnly}
+                setInStockOnly={setInStockOnly}
+                onClear={handleClearFilters}
               />
-            ))
-          )}
+            )}
+          </div>
         </div>
-      )}
-    </div>
+
+        {/* Loading y errores */}
+        {loading && (
+          <div className="text-center text-muted py-4">
+            Cargando productos...
+          </div>
+        )}
+
+        {error && !loading && (
+          <div className="text-center text-danger py-4">{error}</div>
+        )}
+
+        {/* Products Grid */}
+        {!loading && !error && (
+          <div className="row g-4">
+            {filteredProducts.length === 0 ? (
+              <div className="col-12">
+                <p className="text-muted text-center mb-0">
+                  No se encontraron productos con los filtros aplicados.
+                </p>
+              </div>
+            ) : (
+              filteredProducts.map((product) => (
+                <ProductCard
+                  key={product.id}
+                  product={product}
+                  category={getCategoryName(product)}
+                  getStockBadgeClass={getStockBadgeClass}
+                />
+              ))
+            )}
+          </div>
+        )}
+      </div>
+      <Outlet context={{ reloadProduct: fetchProducts }} />
+    </>
   );
 };
 

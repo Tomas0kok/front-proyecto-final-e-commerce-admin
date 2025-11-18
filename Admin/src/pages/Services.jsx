@@ -1,6 +1,7 @@
 import { useState, useEffect, useMemo } from "react";
 import { Plus, Users, Clock, DollarSign } from "lucide-react";
 import { getAdminServices } from "../services/servicesService";
+import { Navigate, Outlet } from "react-router-dom";
 
 // Helper para manejar número o string
 const formatPrice = (price) => {
@@ -15,6 +16,8 @@ const Services = () => {
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
+  const navigate = useNavigate();
 
   /* =========================
    *  Cargar servicios desde la API (vista admin)
@@ -67,7 +70,11 @@ const Services = () => {
             Administra cursos y talleres de reciclaje
           </p>
         </div>
-        <button className="btn btn-primary d-flex align-items-center gap-2">
+        <button
+          type="button"
+          onClick={() => navigate("/admin/services/new")}
+          className="btn btn-primary d-flex align-items-center gap-2"
+        >
           <Plus size={18} /> Nuevo Servicio
         </button>
       </div>

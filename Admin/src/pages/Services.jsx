@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo } from "react";
 import { Plus, Users, Clock, DollarSign } from "lucide-react";
 import { getAdminServices } from "../services/servicesService";
-import { Navigate, Outlet } from "react-router-dom";
+import { useNavigate, Outlet } from "react-router-dom";
 
 // Helper para manejar número o string
 const formatPrice = (price) => {

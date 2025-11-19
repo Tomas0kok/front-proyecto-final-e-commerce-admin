@@ -121,8 +121,8 @@ const Subscriptions = () => {
                   </span>
                 </div>
 
-                <div className="card-body">
-                  <ul className="list-unstyled text-start mb-4">
+                <div className="card-body d-flex flex-column">
+                  <ul className="list-unstyled text-start mb-4 flex-grow-1">
                     {plan.features.map((feature, featureIdx) => (
                       <li
                         key={featureIdx}
@@ -137,13 +137,15 @@ const Subscriptions = () => {
                         </span>
                       </li>
                     ))}
+
                     {plan.features.length === 0 && (
                       <li className="text-muted small">
                         Este plan aún no tiene características cargadas.
                       </li>
                     )}
                   </ul>
-                  <button className="btn btn-ghost-eco btn-sm">
+
+                  <button className="btn btn-ghost-eco btn-sm mt-auto">
                     Editar Plan
                   </button>
                 </div>

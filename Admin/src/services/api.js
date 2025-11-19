@@ -1,11 +1,9 @@
-// src/services/api.js
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: "http://localhost:3000/api", // ajusta si usás otra URL
+  baseURL: "http://localhost:3000/api",
 });
 
-// Token en memoria (rápido) + fallback a localStorage
 let authToken = null;
 
 export function setAuthToken(token) {
@@ -30,7 +28,6 @@ export function clearAuthToken() {
   localStorage.removeItem("authToken");
 }
 
-// Interceptor: agrega Authorization si hay token
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem("authToken");
   if (token) {

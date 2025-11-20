@@ -80,7 +80,8 @@ const Subscriptions = () => {
           </p>
         </div>
         <button className="btn btn-primary d-flex align-items-center gap-2">
-          <Plus size={18} /> Nuevo Plan
+          <Plus size={18} />
+          <span className="d-none d-sm-inline">Nueva Publicación</span>
         </button>
       </div>
 

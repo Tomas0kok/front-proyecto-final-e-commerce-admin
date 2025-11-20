@@ -152,7 +152,9 @@ const Products = () => {
             onClick={() => navigate("/admin/products/new")}
             className="btn btn-primary d-flex align-items-center gap-2"
           >
-            <Plus size={18} /> Nuevo Producto
+            <Plus size={18} />
+
+            <span className="d-none d-sm-inline">Nuevo Producto</span>
           </button>
         </div>
 

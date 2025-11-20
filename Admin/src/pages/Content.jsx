@@ -159,7 +159,7 @@ const Content = () => {
             <div className="d-flex justify-content-end mb-3">
               <button className="btn btn-primary d-flex align-items-center">
                 <Plus size={16} className="me-2" />
-                Nueva Publicación
+                <span className="d-none d-sm-inline">Nueva Publicación</span>
               </button>
             </div>
 
@@ -233,7 +233,7 @@ const Content = () => {
             <div className="d-flex justify-content-end mb-3">
               <button className="btn btn-primary d-flex align-items-center">
                 <Plus size={16} className="me-2" />
-                Nueva Guía
+                <span className="d-none d-sm-inline">Nueva Guía</span>
               </button>
             </div>
 
@@ -285,7 +285,7 @@ const Content = () => {
             <div className="d-flex justify-content-end mb-3">
               <button className="btn btn-primary d-flex align-items-center">
                 <Plus size={16} className="me-2" />
-                Nuevo Video
+                <span className="d-none d-sm-inline">Nuevo Video</span>
               </button>
             </div>
 

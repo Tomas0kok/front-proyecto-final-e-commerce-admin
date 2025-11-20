@@ -29,10 +29,10 @@ const router = createBrowserRouter([
   // Bloque protegido /admin/*
   {
     path: "/admin",
-    element: <ProtectedRoute />, // chequea sesión
+    element: <ProtectedRoute />, 
     children: [
       {
-        element: <Layout />, // Header + Sidebar + <Outlet />
+        element: <Layout />, // Header + Sidebar 
         children: [
           { path: "dashboard", element: <Dashboard /> },
           { path: "subscriptions", element: <Subscriptions /> },
